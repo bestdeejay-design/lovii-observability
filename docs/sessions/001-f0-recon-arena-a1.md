@@ -1,6 +1,6 @@
 # Сессия 001 — Ф-0 наблюдаемости: рекогнисцировка, каркас, арена А-1
 
-Дата: 2026-10-12. Репо: `bestdeejay-design/lovii-observability` (private).
+Дата: 2026-10-12. Репо: `bestdeejay-design/lovii-observability` (public).
 План: `~/LOVII/НАБЛЮДАЕМОСТЬ-ПЛАН.md`. Арена: `bestdeejay-design/lovii-arena-observability`.
 
 ## Сделано
