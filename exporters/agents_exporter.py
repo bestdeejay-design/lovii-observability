@@ -23,6 +23,7 @@ STALE_SEC = int(os.environ.get("AGENT_STALE_SEC", "1800"))  # 30 мин
 RETENTION_SEC = int(os.environ.get("AGENT_RETENTION_SEC", "86400"))
 RETENTION_ON = os.environ.get("AGENTS_RETENTION", "0") == "1"
 PORT = int(os.environ.get("EXPORTER_PORT", "9119"))
+BIND = os.environ.get("EXPORTER_BIND", "127.0.0.1")
 
 def esc(s): return str(s).replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ")
 
@@ -63,4 +64,4 @@ if __name__ == "__main__":
             self.end_headers()
             self.wfile.write(body)
         def log_message(self, *a): pass
-    HTTPServer(("127.0.0.1", PORT), H).serve_forever()
+    HTTPServer((BIND, PORT), H).serve_forever()
