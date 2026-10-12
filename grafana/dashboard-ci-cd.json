@@ -859,14 +859,13 @@
       "options": {},
       "targets": [
         {
-          "expr": "lovii_app_stand_sha",
-          "format": "table",
+          "expr": "lovii_stack_sha",
+          "refId": "A",
           "instant": true,
-          "range": false,
-          "refId": "A"
+          "format": "table"
         }
       ],
-      "title": "app: SHA стендов",
+      "title": "SHA стеков (прод/staging: core, b2b, admin)",
       "transformations": [
         {
           "id": "organize",
@@ -874,11 +873,13 @@
             "excludeByName": {
               "Time": true,
               "Value": true,
-              "__name__": true
+              "__name__": true,
+              "ok": true
             },
             "renameByName": {
-              "sha": "SHA",
-              "stand": "стенд"
+              "stand": "стенд",
+              "repo": "стек",
+              "sha": "SHA"
             }
           }
         }
@@ -906,13 +907,18 @@
       "targets": [
         {
           "expr": "lovii_app_stand_sha_behind",
-          "format": "table",
+          "refId": "A",
           "instant": true,
-          "range": false,
-          "refId": "A"
+          "format": "table"
+        },
+        {
+          "expr": "lovii_stack_behind",
+          "refId": "B",
+          "instant": true,
+          "format": "table"
         }
       ],
-      "title": "Отставание стендов (behind)",
+      "title": "Отставание: app + стеки прода (behind)",
       "transformations": [
         {
           "id": "organize",
@@ -923,8 +929,9 @@
               "__name__": true
             },
             "renameByName": {
-              "branch": "ветка",
-              "stand": "стенд"
+              "stand": "стенд",
+              "repo": "стек",
+              "branch": "ветка"
             }
           }
         }
@@ -945,5 +952,5 @@
   "timezone": "browser",
   "title": "Lovii — деплой и CI: живой пульт",
   "uid": "lovii-cicd",
-  "version": 2
+  "version": 3
 }
