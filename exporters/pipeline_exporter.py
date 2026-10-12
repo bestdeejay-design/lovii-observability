@@ -106,7 +106,7 @@ def collect_cached() -> bytes:
 if __name__ == "__main__":
     from http.server import HTTPServer, BaseHTTPRequestHandler
     PORT = int(os.environ.get("EXPORTER_PORT", "9118"))
-BIND = os.environ.get("EXPORTER_BIND", "127.0.0.1")
+    BIND = os.environ.get("EXPORTER_BIND", "127.0.0.1")
     class H(BaseHTTPRequestHandler):
         def do_GET(self):
             self.send_response(200)
