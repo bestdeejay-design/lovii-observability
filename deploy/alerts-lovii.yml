@@ -1,0 +1,49 @@
+# Правила алертов lovii (Ф-3) — фрагмент ~/monitoring/prometheus/alerts.yml на CHUWI.
+# Канал уведомлений Alertmanager НЕ подключён (развилка владельца) — правила работают,
+# но пока видны только в Prometheus/Grafana Alertmanager UI (:9093).
+groups:
+  - name: host
+    rules: []   # хостовые правила живут в том же файле на CHUWI, сюда не включены
+  - name: lovii-cicd
+    rules:
+      # Сторож сторожа (А-6 P0-2): экспортер мёртв или не собирается
+      - alert: LoviiExporterDown
+        expr: up{job="lovii-cicd"} == 0
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "Экспортер lovii-cicd не скрейпается: {{ $labels.instance }}"
+      - alert: LoviiPipelineCollectFailed
+        expr: lovii_exporter_collect_failed == 1 or (time() - lovii_exporter_last_success_timestamp_seconds) > 600
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "pipeline-exporter не собирает данные GitHub >10 мин"
+      # CI staging красный и не перезапущен (порог по А-6: прогоны ~7-13 мин)
+      - alert: LoviiCiStagingFailed
+        expr: max by (repo) (lovii_ci_run_last{branch="staging",conclusion="failure"}) == 1
+        for: 15m
+        labels: { severity: warning }
+        annotations:
+          summary: "CI staging {{ $labels.repo }} красный >15 мин"
+      # Расхождение стенда app от ветки
+      - alert: LoviiAppStandBehind
+        expr: lovii_app_stand_sha_behind{branch="staging"} > 20
+        for: 1h
+        labels: { severity: info }
+        annotations:
+          summary: "app {{ $labels.stand }} отстаёт от staging на {{ $value }} коммитов >1ч"
+      # Сторож textfile прода (заработает после установки cron на проде — развилка)
+      - alert: LoviiStandTextfileStale
+        expr: (time() - lovii_stands_textfile_timestamp_seconds) > 600
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "textfile SHA стеков прода не обновляется >10 мин (мёртвый cron?)"
+      # Зависший агент (Ф-2): молчит >30 мин при открытой задаче
+      - alert: LoviiAgentStale
+        expr: lovii_agent_stale_seconds > 3600
+        for: 5m
+        labels: { severity: info }
+        annotations:
+          summary: "Агент {{ $labels.agent }} молчит >1ч при активной задаче ({{ $labels.task }})"
