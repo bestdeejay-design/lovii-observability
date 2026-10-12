@@ -6,47 +6,56 @@
         "uid": "prometheus"
       },
       "fieldConfig": {
-        "defaults": {},
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 16,
+        "h": 4,
+        "w": 4,
         "x": 0,
         "y": 0
       },
-      "options": {},
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "none",
+        "keepFields": [],
+        "labelFields": [
+          "repo"
+        ],
+        "orientation": "auto",
+        "reduceOptions": {
+          "cal": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "textMode": "none"
+      },
       "targets": [
         {
-          "expr": "lovii_ci_run_last == 1",
-          "format": "table",
+          "expr": "lovii_ci_run_failed{repo=\"lovii-core\",branch=\"staging\"}",
           "instant": true,
           "range": false,
           "refId": "A"
         }
       ],
-      "title": "Последний CI-прогон (репо × ветка)",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "Value": true,
-              "__name__": true
-            },
-            "renameByName": {
-              "Duration": "длит., сек",
-              "branch": "ветка",
-              "conclusion": "итог",
-              "repo": "репо",
-              "run_id": "run",
-              "status": "статус"
-            }
-          }
-        }
-      ],
-      "type": "table"
+      "title": "CI staging: core",
+      "type": "stat"
     },
     {
       "datasource": {
@@ -55,6 +64,406 @@
       },
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "none",
+        "keepFields": [],
+        "labelFields": [
+          "repo"
+        ],
+        "orientation": "auto",
+        "reduceOptions": {
+          "cal": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "textMode": "none"
+      },
+      "targets": [
+        {
+          "expr": "lovii_ci_run_failed{repo=\"lovii-core\",branch=\"master\"}",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "CI master: core",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "none",
+        "keepFields": [],
+        "labelFields": [
+          "repo"
+        ],
+        "orientation": "auto",
+        "reduceOptions": {
+          "cal": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "textMode": "none"
+      },
+      "targets": [
+        {
+          "expr": "lovii_ci_run_failed{repo=\"lovii-app\",branch=\"staging\"}",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "CI staging: app",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 0
+      },
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "none",
+        "keepFields": [],
+        "labelFields": [
+          "repo"
+        ],
+        "orientation": "auto",
+        "reduceOptions": {
+          "cal": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "textMode": "none"
+      },
+      "targets": [
+        {
+          "expr": "lovii_ci_run_failed{repo=\"lovii-app\",branch=\"master\"}",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "CI master: app",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "none",
+        "keepFields": [],
+        "labelFields": [
+          "repo"
+        ],
+        "orientation": "auto",
+        "reduceOptions": {
+          "cal": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "textMode": "none"
+      },
+      "targets": [
+        {
+          "expr": "lovii_ci_run_failed{repo=\"lovii-b2b\",branch=\"staging\"}",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "CI staging: b2b",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "none",
+        "keepFields": [],
+        "labelFields": [
+          "repo"
+        ],
+        "orientation": "auto",
+        "reduceOptions": {
+          "cal": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "textMode": "none"
+      },
+      "targets": [
+        {
+          "expr": "lovii_ci_run_failed{repo=\"lovii-b2b\",branch=\"master\"}",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "CI master: b2b",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 24,
+        "y": 0
+      },
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "none",
+        "keepFields": [],
+        "labelFields": [
+          "repo"
+        ],
+        "orientation": "auto",
+        "reduceOptions": {
+          "cal": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "textMode": "none"
+      },
+      "targets": [
+        {
+          "expr": "lovii_ci_run_failed{repo=\"lovii-admin\",branch=\"staging\"}",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "CI staging: admin",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 28,
+        "y": 0
+      },
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "none",
+        "keepFields": [],
+        "labelFields": [
+          "repo"
+        ],
+        "orientation": "auto",
+        "reduceOptions": {
+          "cal": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "textMode": "none"
+      },
+      "targets": [
+        {
+          "expr": "lovii_ci_run_failed{repo=\"lovii-admin\",branch=\"master\"}",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "CI master: admin",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -78,25 +487,34 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 8,
-        "x": 16,
-        "y": 0
+        "w": 4,
+        "x": 0,
+        "y": 4
       },
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
+        "colorMode": "background_solid",
+        "graphMode": "none",
+        "keepFields": [],
+        "labelFields": [
+          "stand"
+        ],
+        "orientation": "auto",
+        "reduceOptions": {
+          "cal": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
         "textMode": "value_and_name"
       },
       "targets": [
         {
-          "expr": "lovii_app_stand_sha_behind{branch=\"staging\"}",
-          "format": "table",
+          "expr": "max by (stand) (lovii_app_stand_sha_behind{branch=\"staging\"})",
           "instant": true,
           "range": false,
           "refId": "A"
         }
       ],
-      "title": "app-staging отстаёт от staging (коммитов)",
+      "title": "app-staging ← staging",
       "type": "stat"
     },
     {
@@ -106,6 +524,7 @@
       },
       "fieldConfig": {
         "defaults": {
+          "decimals": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -129,25 +548,34 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 8,
-        "x": 16,
+        "w": 4,
+        "x": 4,
         "y": 4
       },
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
+        "colorMode": "background_solid",
+        "graphMode": "none",
+        "keepFields": [],
+        "labelFields": [
+          "stand"
+        ],
+        "orientation": "auto",
+        "reduceOptions": {
+          "cal": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
         "textMode": "value_and_name"
       },
       "targets": [
         {
-          "expr": "lovii_app_stand_sha_behind{branch=\"master\"}",
-          "format": "table",
+          "expr": "max by (stand) (lovii_app_stand_sha_behind{branch=\"master\"})",
           "instant": true,
           "range": false,
           "refId": "A"
         }
       ],
-      "title": "app: отставание стенда от master (коммитов)",
+      "title": "app-staging ← master",
       "type": "stat"
     },
     {
@@ -156,14 +584,277 @@
         "uid": "prometheus"
       },
       "fieldConfig": {
-        "defaults": {},
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
         "overrides": []
       },
       "gridPos": {
         "h": 4,
-        "w": 8,
+        "w": 4,
+        "x": 8,
+        "y": 4
+      },
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "none",
+        "keepFields": [],
+        "labelFields": [
+          "job"
+        ],
+        "orientation": "auto",
+        "reduceOptions": {
+          "cal": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "expr": "sum(lovii_agent_active) or vector(0)",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Агенты активны",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 4
+      },
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "none",
+        "keepFields": [],
+        "labelFields": [
+          "job"
+        ],
+        "orientation": "auto",
+        "reduceOptions": {
+          "cal": "lastNotNull",
+          "fields": "",
+          "values": false
+        },
+        "textMode": "none"
+      },
+      "targets": [
+        {
+          "expr": "lovii_exporter_last_success_timestamp_seconds > 0",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Экспортер жив",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 15
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 16,
         "x": 0,
         "y": 8
+      },
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "expr": "lovii_ci_run_duration_seconds",
+          "format": "time_series",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Длительность CI-прогонов",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 70,
+            "span": 1
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "text": "ок"
+                },
+                "1": {
+                  "color": "red",
+                  "text": "FAIL"
+                }
+              },
+              "type": "value"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 16,
+        "x": 16,
+        "y": 8
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "never"
+      },
+      "targets": [
+        {
+          "expr": "lovii_ci_run_failed",
+          "format": "time_series",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Красные прогоны во времени",
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
+      "options": {},
+      "targets": [
+        {
+          "expr": "lovii_agent_active == 1",
+          "format": "table",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Агенты сейчас",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            },
+            "renameByName": {
+              "agent": "агент",
+              "branch": "ветка",
+              "repo": "репо",
+              "status": "статус",
+              "task": "задача"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 10,
+        "x": 12,
+        "y": 15
       },
       "options": {},
       "targets": [
@@ -201,55 +892,27 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "s"
+          "unit": "short"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 16,
-        "x": 8,
-        "y": 8
+        "h": 7,
+        "w": 10,
+        "x": 22,
+        "y": 15
       },
       "options": {},
       "targets": [
         {
-          "expr": "lovii_ci_run_duration_seconds",
-          "format": "time_series",
-          "instant": false,
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Длительность CI-прогонов",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 16,
-        "x": 0,
-        "y": 12
-      },
-      "options": {},
-      "targets": [
-        {
-          "expr": "lovii_branch_sha_age_seconds",
+          "expr": "lovii_app_stand_sha_behind",
           "format": "table",
           "instant": true,
           "range": false,
           "refId": "A"
         }
       ],
-      "title": "Возраст HEAD веток (последний коммит)",
+      "title": "Отставание стендов (behind)",
       "transformations": [
         {
           "id": "organize",
@@ -261,8 +924,7 @@
             },
             "renameByName": {
               "branch": "ветка",
-              "repo": "репо",
-              "sha": "HEAD"
+              "stand": "стенд"
             }
           }
         }
@@ -281,7 +943,7 @@
     "to": "now"
   },
   "timezone": "browser",
-  "title": "Lovii — CI/CD и стенды",
+  "title": "Lovii — деплой и CI: живой пульт",
   "uid": "lovii-cicd",
-  "version": 1
+  "version": 2
 }
