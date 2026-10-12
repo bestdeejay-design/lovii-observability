@@ -1,0 +1,7 @@
+# Фрагмент scrape_configs прометея хаба (~/monitoring/prometheus/prometheus.yml).
+# Правила алертов — Ф-3, отдельный файл (см. отчёт арены A-6: правила пока не существуют).
+
+  - job_name: lovii-cicd
+    scrape_interval: 60s   # audit А-1 P1-1: не чаще TTL экспортера
+    static_configs:
+      - targets: ["lovii-pipeline-exporter:9118", "lovii-agents-exporter:9119"]

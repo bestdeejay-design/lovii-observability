@@ -29,7 +29,10 @@ def esc(s): return str(s).replace("\\", "\\\\").replace('"', '\\"').replace("\n"
 
 def collect():
     lines, now = [], time.time()
-    for f in sorted(glob.glob(os.path.join(REGISTRY, "*.json"))):
+    from datetime import datetime, timezone
+    for f in sorted(glob.glob(os.path.join(REGISTRY, "[a-z0-9._-]*.json"))):
+        if "/.trash/" in f or os.path.basename(f).startswith("."):
+            continue
         try:
             with open(f) as fh:
                 d = json.load(fh)
@@ -37,8 +40,12 @@ def collect():
             continue
         updated = d.get("updated_at", "")
         try:
-            from datetime import datetime
-            age = now - datetime.fromisoformat(updated.replace("Z", "+00:00")).timestamp()
+            dt = datetime.fromisoformat(updated.replace("Z", "+00:00"))
+            if dt.tzinfo is None:
+                continue  # наивный timestamp без зоны — не доверяем (сдвиг на часы)
+            age = now - dt.astimezone(timezone.utc).timestamp()
+            if age < 0:
+                continue  # дата из будущего — подделка/битые часы, не «вечный active»
         except Exception:
             continue
         agent = esc(d.get("agent", os.path.basename(f)[:-5]))

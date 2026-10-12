@@ -23,7 +23,7 @@ import os, re, time, json, threading, urllib.request
 from datetime import datetime
 
 REPOS = ["lovii-core", "lovii-app", "lovii-b2b", "lovii-admin"]
-BRANCHES = ["staging", "master"]
+BRANCHES = {"staging": "push", "master": "workflow_dispatch"}
 APP_STANDS = {"staging": "https://app-staging.lovii.ru/version.json",
               "prod": "https://app.lovii.ru/version.json"}
 GH = "https://api.github.com"
@@ -54,23 +54,34 @@ def collect() -> str:
                 continue
             age = now - iso_ts(br["commit"]["commit"]["committer"]["date"])
             lines.append(f'lovii_branch_sha_age_seconds{{repo="{repo}",branch="{branch}",sha="{sha}"}} {age:.0f}')
-            runs = gh(f"/repos/lovii-tech/{repo}/actions/runs?branch={branch}&per_page=1").get("workflow_runs", [])
-            for i, run in enumerate(runs):
+            event = BRANCHES[branch]
+            runs = gh(f"/repos/lovii-tech/{repo}/actions/runs?branch={branch}&event={event}&per_page=1").get("workflow_runs", [])
+            for run in runs:
                 rid = run["id"]
                 concl = esc(run.get("conclusion") or "none")
                 status = esc(run["status"])
-                lbl = f'repo="{repo}",branch="{branch}",run_id="{rid}",conclusion="{concl}",status="{status}"'
+                lbl = f'repo="{repo}",branch="{branch}",run_id="{rid}",conclusion="{concl}",status="{status}",event="{event}"'
                 started = iso_ts(run["run_started_at"])
-                if i == 0:
-                    lines.append(f'lovii_ci_run_last{{{lbl}}} 1')
-                    lines.append(f'lovii_ci_run_age_seconds{{repo="{repo}",branch="{branch}",run_id="{rid}"}} {now-started:.0f}')
-                else:
-                    lines.append(f'lovii_ci_run_last{{{lbl}}} 0')
+                lines.append(f'lovii_ci_run_last{{{lbl}}} 1')
+                lines.append(f'lovii_ci_run_age_seconds{{repo="{repo}",branch="{branch}",run_id="{rid}"}} {now-started:.0f}')
                 if status == "completed":
                     ended = iso_ts(run["updated_at"])
                     lines.append(f'lovii_ci_run_duration_seconds{{{lbl}}} {ended-started:.0f}')
-                else:
+                elif status == "in_progress":
                     lines.append(f'lovii_ci_run_in_progress{{repo="{repo}",branch="{branch}",run_id="{rid}"}} 1')
+                    # текущий шаг застрявшего прогона (jobs API)
+                    try:
+                        jobs = gh(f"/repos/lovii-tech/{repo}/actions/runs/{rid}/jobs?per_page=30").get("jobs", [])
+                        done = sum(1 for j in jobs if j["status"] == "completed")
+                        lines.append(f'lovii_ci_run_jobs{{repo="{repo}",branch="{branch}",run_id="{rid}"}} {len(jobs)}')
+                        lines.append(f'lovii_ci_run_jobs_done{{repo="{repo}",branch="{branch}",run_id="{rid}"}} {done}')
+                        for j in jobs:
+                            if j["status"] == "in_progress":
+                                steps = [st for st in j.get("steps", []) if st["status"] == "in_progress"]
+                                if steps:
+                                    lines.append(f'lovii_ci_run_step{{repo="{repo}",branch="{branch}",run_id="{rid}",job="{esc(j["name"])}",step="{esc(steps[0]["name"])}"}} 1')
+                    except Exception:
+                        pass
     # app-стенды: публичный version.json = {"version":"production·<sha>·<date>"}
     for stand, url in APP_STANDS.items():
         try:
@@ -90,17 +101,26 @@ def collect() -> str:
 _cache_lock = threading.Lock()
 _cache = {"ts": 0.0, "body": b"# collecting\n"}
 
+_last_good = {"body": b"", "ts": 0.0}
+
 def collect_cached() -> bytes:
+    """Отдаём последний УДАЧНЫЙ срез + честный статус экспортера.
+    При сбое: lovii_exporter_collect_failed=1 (gauge), данные НЕ обновляются и
+    age последнего успеха виден по lovii_exporter_last_success_timestamp_seconds."""
     with _cache_lock:
         if time.time() - _cache["ts"] >= TTL:
             try:
-                _cache["body"] = collect().encode()
-                _cache["ts"] = time.time()
-            except Exception as e:
-                # держим предыдущий срез, ошибку — служебной метрикой
-                prev = _cache["body"]
-                _cache["body"] = prev + b'lovii_exporter_collect_failed 1\n'
-                _cache["ts"] = time.time()
+                body = collect().encode()
+                _last_good["body"] = body
+                _last_good["ts"] = time.time()
+                failed = b"0"
+            except Exception:
+                failed = b"1"
+            status = (b"lovii_exporter_collect_failed " + failed + b"\n"
+                      b"lovii_exporter_last_success_timestamp_seconds "
+                      + str(_last_good["ts"]).encode() + b"\n")
+            _cache["body"] = _last_good["body"] + status
+            _cache["ts"] = time.time()
         return _cache["body"]
 
 if __name__ == "__main__":

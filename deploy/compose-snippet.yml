@@ -1,0 +1,28 @@
+# Фрагмент docker-compose.yml хаба мониторинга на CHUWI (~/monitoring).
+# Вставлять ДО секции volumes: (грабля сессии 002). Бэкап: docker-compose.yml.bak-20261012-lovii.
+services:
+  lovii-pipeline:
+    image: python:3.12-alpine
+    container_name: lovii-pipeline-exporter
+    restart: unless-stopped
+    working_dir: /app
+    command: python exporters/pipeline_exporter.py
+    environment:
+      EXPORTER_BIND: 0.0.0.0        # внутри сети compose; порты наружу не публикуются
+    env_file: ./lovii/exporter.env  # GITHUB_TOKEN, 600, вне git
+    volumes:
+      - ./lovii/repo/exporters:/app/exporters:ro
+
+  lovii-agents:
+    image: python:3.12-alpine
+    container_name: lovii-agents-exporter
+    restart: unless-stopped
+    working_dir: /app
+    command: python exporters/agents_exporter.py
+    environment:
+      EXPORTER_BIND: 0.0.0.0
+      AGENTS_REGISTRY: /data/agents-registry
+    env_file: ./lovii/exporter.env
+    volumes:
+      - ./lovii/repo/exporters:/app/exporters:ro
+      - /home/lovii/agents-registry:/data/agents-registry
