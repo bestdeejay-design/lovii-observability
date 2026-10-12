@@ -64,6 +64,9 @@ def collect() -> str:
                 started = iso_ts(run["run_started_at"])
                 lines.append(f'lovii_ci_run_last{{{lbl}}} 1')
                 lines.append(f'lovii_ci_run_age_seconds{{repo="{repo}",branch="{branch}",run_id="{rid}"}} {now-started:.0f}')
+                failed = "1" if concl == "failure" else ("0" if status == "completed" else "")
+                if failed:
+                    lines.append(f'lovii_ci_run_failed{{repo="{repo}",branch="{branch}"}} {failed}')
                 if status == "completed":
                     ended = iso_ts(run["updated_at"])
                     lines.append(f'lovii_ci_run_duration_seconds{{{lbl}}} {ended-started:.0f}')
