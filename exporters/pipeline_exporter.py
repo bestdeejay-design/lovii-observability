@@ -95,8 +95,15 @@ def collect() -> str:
                 raise ValueError("bad sha in version.json")
             lines.append(f'lovii_app_stand_sha{{stand="{stand}",sha="{stand_sha}"}} 1')
             for branch in BRANCHES:
+                # Семантика «отставание по коду»: 0, если SHA стенда уже
+                # содержится в ветке (включая docs-only скипы деплоя и
+                # merge-коммиты релизов). Иначе — коммиты ветки c момента
+                # merge-base. Голый compare врёт после переписывания
+                # истории (B04) и на docs-only скипах.
                 cmp = gh(f"/repos/lovii-tech/lovii-app/compare/{stand_sha}...{branch}")
-                lines.append(f'lovii_app_stand_sha_behind{{stand="{stand}",branch="{branch}"}} {len(cmp.get("commits", []))}')
+                merge_base = (cmp.get("merge_base_commit") or {}).get("sha", "")
+                behind = 0 if merge_base == stand_sha else len(cmp.get("commits", []))
+                lines.append(f'lovii_app_stand_sha_behind{{stand="{stand}",branch="{branch}"}} {behind}')
         except Exception:
             lines.append(f'lovii_app_stand_sha{{stand="{stand}",sha="fetch_error"}} 0')
     return "\n".join(lines) + "\n"
