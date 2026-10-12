@@ -19,3 +19,12 @@
   → poller получит chat_id → Alertmanager telegram_configs. Токен бота:
   TELEGRAM_OTP_BOT_TOKEN в /opt/lovii-core/.env (на проде; CHUWI до api.telegram
   достучится напрямую — IPv4, как в каноне TG).
+
+## ДОПОЛНЕНИЕ (тот же вечер): канал алертов ПОДКЛЮЧЁН ✅
+- Alertmanager (CHUWI) → Telegram: бот @loviiru_bot (токен TELEGRAM_OTP_BOT_TOKEN
+  из прода, файл telegram.token 400 owner 65534), chat_id владельца 41837507
+  (найден в max_bot_links telegram:otp ↔ +79119287478 — /start не понадобился).
+- Правила: route Lovii.* → tg-lovii, send_resolved, repeat 4h, group 5m.
+- Тест: LoviiTestChannel доставлен без ошибок; LoviiAgentStale сработал по-настоящему
+  (мой протухший heartbeat) — канал и правила живые. Инвайт владельцу не нужен:
+  диалог с ботом уже существовал (OTP).
