@@ -9,14 +9,19 @@ heartbeat из НАБЛЮДАЕМОСТЬ-ПЛАН.md, Ф-2):
 Метрики:
   lovii_agent_active{agent,repo,branch,task,status}   — 1, если updated_at < STALE_SEC
   lovii_agent_stale_seconds{agent}                    — возраст последнего heartbeat
-Файлы старше 24ч со status=done чистятся экспортером (retention).
+
+Retention: по умолчанию ВЫКЛЮЧЕН (AGENTS_RETENTION=0). heartbeat-файлы —
+будущий audit-след (задачи арены А-4/А-5), экспортер их не удаляет. Если
+включить — файлы не unlink, а переносятся в agents-registry/.trash/
+(карантин; чистку .trash делает владелец/отдельный cron).
 Запуск: systemd timer, раз в 30с, порт :9119 (bind 127.0.0.1).
 """
-import os, time, json, glob
+import os, time, json, glob, shutil
 
 REGISTRY = os.environ.get("AGENTS_REGISTRY", os.path.expanduser("~/LOVII/agents-registry"))
 STALE_SEC = int(os.environ.get("AGENT_STALE_SEC", "1800"))  # 30 мин
 RETENTION_SEC = int(os.environ.get("AGENT_RETENTION_SEC", "86400"))
+RETENTION_ON = os.environ.get("AGENTS_RETENTION", "0") == "1"
 PORT = int(os.environ.get("EXPORTER_PORT", "9119"))
 
 def esc(s): return str(s).replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ")
@@ -42,8 +47,10 @@ def collect():
         lines.append(f'lovii_agent_stale_seconds{{agent="{agent}"}} {age:.0f}')
         if status != "done" and age < STALE_SEC:
             lines.append(f'lovii_agent_active{{{label}}} 1')
-        if status == "done" and age > RETENTION_SEC:
-            os.unlink(f)  # retention: закрытые задачи старше суток
+        if status == "done" and age > RETENTION_SEC and RETENTION_ON:
+            trash = os.path.join(REGISTRY, ".trash")
+            os.makedirs(trash, exist_ok=True)
+            shutil.move(f, os.path.join(trash, os.path.basename(f)))  # карантин, не unlink
     return "\n".join(lines) + "\n"
 
 if __name__ == "__main__":
